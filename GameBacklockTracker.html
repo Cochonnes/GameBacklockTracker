@@ -4571,7 +4571,8 @@
                     }
                     
                     // Sort games into appropriate lists
-                    let shameAdded = 0, wishlistAdded = 0, completedAdded = 0;
+                    let shameAdded = 0, wishlistAdded = 0, completedAdded = 0, friendsAdded = 0;
+                    const friendsBeforeImport = [...games.friends];
                     
                     importedGames.forEach(game => {
                         if (game.completed || game.status === 'completed') {
@@ -4590,7 +4591,9 @@
                         if (game.playingWith) {
                             game.playingWith.forEach(friend => {
                                 if (friend !== 'Solo' && !games.friends.includes(friend)) {
+                                    console.log('Adding friend to friends list:', friend);
                                     games.friends.push(friend);
+                                    friendsAdded++;
                                 }
                             });
                         }
@@ -4598,12 +4601,15 @@
                     
                     // Update UI
                     renderTables();
+                    renderFriends();
                     updateTimeline();
                     updateStatistics();
                     updateWarnings();
                     trackChange();
                     
-                    const message = `Import successful!\nAdded:\n${shameAdded} games to Backlog\n${wishlistAdded} games to Wishlist\n${completedAdded} games to Completed`;
+                    console.log('Friends list after import:', games.friends);
+                    
+                    const message = `Import successful!\nAdded:\n${shameAdded} games to Backlog\n${wishlistAdded} games to Wishlist\n${completedAdded} games to Completed\n${friendsAdded} friends to Friends list`;
                     if (errorCount > 0) {
                         alert(message + `\n\nNote: ${errorCount} lines had errors and were skipped.`);
                     } else {
